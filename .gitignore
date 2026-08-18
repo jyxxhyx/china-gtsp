@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+
+# 运行产物
+output/concorde_run*.log
+output/*.pul
+output/*.sav
+output/*.mas
+output/road_matrix_partial.npz
+output/O*
+
+# 系统与临时
+.DS_Store
+*.tmp
