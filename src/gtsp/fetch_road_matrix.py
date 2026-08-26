@@ -18,7 +18,7 @@ import urllib.request
 import numpy as np
 import pandas as pd
 
-_root = os.path.dirname(os.path.abspath(__file__))
+_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 os.chdir(_root)
 
 BASE = "http://router.project-osrm.org/table/v1/driving/"
@@ -43,7 +43,7 @@ def table(coords):
 
 
 def main():
-    df = pd.read_csv('data/cities.csv')
+    df = pd.read_csv(os.path.join(_root, 'data', 'gtsp', 'cities.csv'))
     n = len(df)
     coords_all = list(zip(df['lng'].values, df['lat'].values))
     print(f"{n}城市, 目标 {n*(n-1)//2} 对距离")
@@ -57,7 +57,7 @@ def main():
     D = np.zeros((n, n))
 
     # 缓存文件(断点续传)
-    cache = os.path.join(_root, 'output', 'road_matrix_partial.npz')
+    cache = os.path.join(_root, 'output', 'gtsp', 'road_matrix_partial.npz')
     done = set()
     if os.path.exists(cache):
         z = np.load(cache, allow_pickle=True)
@@ -108,8 +108,8 @@ def main():
     print(f"\n矩阵完成: {n}×{n}, 最大不对称偏差 {asym:.4f} km (OSRM双向路线差异)")
 
     json.dump({'n': n, 'cities': df['name'].tolist(), 'matrix_km': D.round(3).tolist()},
-              open(os.path.join(_root, 'output', 'road_matrix_344.json'), 'w'), ensure_ascii=False)
-    np.save(os.path.join(_root, 'output', 'road_matrix_344.npy'), D)
+              open(os.path.join(_root, 'output', 'gtsp', 'road_matrix_344.json'), 'w'), ensure_ascii=False)
+    np.save(os.path.join(_root, 'output', 'gtsp', 'road_matrix_344.npy'), D)
     print("saved: output/road_matrix_344.json / .npy")
     print(f"总耗时 {time.time()-t0:.0f}s, 总请求 {n_req}")
 

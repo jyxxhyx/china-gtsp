@@ -54,9 +54,9 @@ def resolve_overlaps(positions, width=60, height=22, max_iter=200):
 
 
 def main():
-    df = pd.read_csv(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data', 'cities.csv'))
+    df = pd.read_csv(os.path.join(os.path.dirname(__file__), '..', 'data', 'gtsp', 'cities.csv'))
 
-    with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'output', 'road_gtsp_asym_result.json')) as f:
+    with open(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'output', 'gtsp', 'schmidt_ils_result.json')) as f:
         sol = json.load(f)
     path = sol['path']
     dist_open = sol['distance_open']
@@ -92,33 +92,28 @@ def main():
     # 候选城市
     ax.scatter(lons, lats, s=8, c='#b8c2cc', alpha=0.5, transform=PROJ, zorder=2)
 
-    # 路线: OSRM真实路网polyline
-    import json as _json
-    with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'output', 'road_segments_asym.json')) as f:
-        road_segs = _json.load(f)
-    for seg in road_segs:
-        if not seg.get('coords'):
-            continue
-        seg_lons = [c[0] for c in seg['coords']]
-        seg_lats = [c[1] for c in seg['coords']]
-        ax.plot(seg_lons, seg_lats, '-', color='#d63031', linewidth=1.7,
-                transform=PROJ, zorder=4)
+    # 路线
     route_lons = [float(lons[c]) for c in path]
     route_lats = [float(lats[c]) for c in path]
+    ax.plot(route_lons, route_lats, '-', color='#d63031', linewidth=2.2,
+            transform=PROJ, zorder=4)
     ax.scatter(route_lons, route_lats, s=55, c='#d63031', edgecolors='white',
                linewidths=1.2, transform=PROJ, zorder=5)
 
     # ===== 标签布局：8方位候选 + 避让路线线段 =====
     base_offset = {
-        '哈尔滨市': (10, 8), '长春市': (10, 6), '阜新市': (8, -4), '赤峰市': (10, 10),
-        '北京市': (-4, 14), '廊坊市': (12, 6), '天津市': (-18, 8), '滨州市': (10, -2),
-        '连云港市': (10, 6), '上海市': (10, 8), '杭州市': (-4, 12), '黄山市': (12, 4),
-        '上饶市': (-8, -16), '高雄市': (10, 6), '漳州市': (12, -2), '潮州市': (12, -2),
-        '香港特别行政区': (12, -14), '澳门特别行政区': (-6, -16), '海口市': (4, -16),
-        '百色市': (-8, -12), '六盘水市': (-12, -6), '昭通市': (-10, 8), '泸州市': (-12, 10),
-        '重庆市': (-16, 10), '张家界市': (-16, 4), '十堰市': (-6, 12), '三门峡市': (8, 10),
-        '运城市': (6, 10), '铜川市': (-8, 12), '固原市': (4, 12), '兰州市': (-4, 12),
-        '西宁市': (-6, 12), '哈密市': (10, 8), '那曲市': (10, 6),
+        '哈尔滨市': (10, 8), '松原市': (10, 6), '通辽市': (8, 10),
+        '朝阳市': (12, -2), '北京市': (-4, 14), '廊坊市': (12, 6),
+        '天津市': (-18, 8), '滨州市': (10, -2), '盐城市': (10, 6),
+        '上海市': (10, 8), '嘉兴市': (-4, 12), '黄山市': (12, 4),
+        '上饶市': (-8, -16), '福州市': (12, -2), '台中市': (10, 6),
+        '汕尾市': (12, -2), '香港特别行政区': (12, -14), '澳门特别行政区': (-6, -16),
+        '海口市': (4, -16), '北海市': (-10, -14), '六盘水市': (-12, -6),
+        '昭通市': (-10, 8), '泸州市': (-12, 10), '重庆市': (-16, 10),
+        '张家界市': (-16, 4), '十堰市': (-6, 12), '三门峡市': (8, 10),
+        '运城市': (6, 10), '铜川市': (-8, 12), '固原市': (4, 12),
+        '定西市': (-4, 12), '昌都市': (10, 6), '玉树藏族自治州': (8, 10),
+        '哈密市': (10, 8),
     }
 
     fig.canvas.draw()
@@ -236,7 +231,7 @@ def main():
     from matplotlib.lines import Line2D
     legend_elems = [
         Line2D([0], [0], color='#d63031', lw=2.2,
-               label=f'实际路网路线（非对称路网GTSP最优）总里程 {sum(s["road_km"] for s in road_segs if s["road_km"]):,.0f} km'),
+               label=f'路线 {dist_open:,.0f} km（哈尔滨 → 哈密）'),
         Line2D([0], [0], marker='o', color='w', markerfacecolor='#d63031',
                markersize=9, label='选中城市（34省各1）'),
         Line2D([0], [0], marker='o', color='w', markerfacecolor='#b8c2cc',
@@ -245,7 +240,7 @@ def main():
     ax.legend(handles=legend_elems, loc='lower left', fontsize=15,
               framealpha=0.95, edgecolor='#aab4be', borderpad=0.8)
 
-    out = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'output', 'route_roadnet_asym.png')
+    out = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'output', 'gtsp', 'route.png')
     plt.savefig(out, dpi=150, bbox_inches='tight', facecolor='#ffffff')
     plt.close()
     print(f"已保存: {os.path.abspath(out)}")

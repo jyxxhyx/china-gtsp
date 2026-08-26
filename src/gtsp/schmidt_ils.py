@@ -451,8 +451,8 @@ class GTSP_ILS:
 # ========== China GTSP入口 ==========
 def load_china():
     import pandas as pd
-    _root = os.path.dirname(os.path.abspath(__file__))
-    df = pd.read_csv(os.path.join(_root, 'data', 'cities.csv'))
+    _root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    df = pd.read_csv(os.path.join(_root, 'data', 'gtsp', 'cities.csv'))
     pm = {'11':'北京','12':'天津','13':'河北','14':'山西','15':'内蒙古','21':'辽宁','22':'吉林','23':'黑龙江',
           '31':'上海','32':'江苏','33':'浙江','34':'安徽','35':'福建','36':'江西','37':'山东','41':'河南',
           '42':'湖北','43':'湖南','44':'广东','45':'广西','46':'海南','50':'重庆','51':'四川','52':'贵州',
@@ -480,7 +480,7 @@ def load_china():
 
 
 if __name__ == '__main__':
-    _root = os.path.dirname(os.path.abspath(__file__))
+    _root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     df, clusters, names, dist = load_china()
     print(f"China GTSP: {len(df)}城 {len(clusters)}簇")
 
@@ -500,7 +500,7 @@ if __name__ == '__main__':
     tlim = int(sys.argv[1]) if len(sys.argv) > 1 else 120
     warm = None
     try:
-        with open(os.path.join(_root, 'output', 'schmidt_ils_result.json')) as f:
+        with open(os.path.join(_root, 'output', 'gtsp', 'schmidt_ils_result.json')) as f:
             sol = json.load(f)
         warm = sol['path'] + [n]  # 34城+虚拟D = 35
         print(f"warm start(开放9700km闭合版): {ils.tour_cost(warm):.0f}")
@@ -517,6 +517,6 @@ if __name__ == '__main__':
 
     json.dump({'distance_open': round(open_cost, 1), 'path': open_tour,
                'cities': [df.iloc[c]['name'] for c in open_tour]},
-              open(os.path.join(_root, 'output', 'schmidt_ils_result.json'), 'w'),
+              open(os.path.join(_root, 'output', 'gtsp', 'schmidt_ils_result.json'), 'w'),
               ensure_ascii=False, indent=2)
     print("saved: output/schmidt_ils_result.json")

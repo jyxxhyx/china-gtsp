@@ -501,7 +501,7 @@ if __name__ == '__main__':
     tlim = int(sys.argv[1]) if len(sys.argv) > 1 else 120
     warm = None
     try:
-        with open('/Users/yixiao/projects/china_gtsp/output/lkh_open_final.json') as f:
+        with open(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'output', 'gtsp', 'lkh_open_final.json')) as f:
             sol = json.load(f)
         warm = sol['path'] + [n]  # 34城+虚拟D = 35
         print(f"warm start(开放9700km闭合版): {ils.tour_cost(warm):.0f}")
@@ -518,6 +518,6 @@ if __name__ == '__main__':
 
     json.dump({'distance_open': round(open_cost, 1), 'path': open_tour,
                'cities': [df.iloc[c]['name'] for c in open_tour]},
-              open('/Users/yixiao/projects/china_gtsp/output/schmidt_ils_result.json', 'w'),
+              open(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'output', 'gtsp', 'schmidt_ils_result.json'), 'w'),
               ensure_ascii=False, indent=2)
     print("saved: output/schmidt_ils_result.json")

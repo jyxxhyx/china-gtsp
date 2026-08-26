@@ -22,7 +22,7 @@ plt.rcParams['font.sans-serif'] = ['Songti SC', 'Hiragino Sans GB', 'Arial Unico
 plt.rcParams['axes.unicode_minus'] = False
 
 PROJ = ccrs.PlateCarree()
-BASE = os.path.dirname(os.path.abspath(__file__))
+BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # 行政区划代码前两位 → 省份简称
 PROV = {11: '北京', 12: '天津', 13: '河北', 14: '山西', 15: '内蒙古', 21: '辽宁', 22: '吉林',
@@ -181,10 +181,10 @@ def place_labels(anchors, texts, sizes, fig_w, fig_h, route_samples, red_pts, gr
 
 
 def main():
-    df = pd.read_csv(os.path.join(BASE, 'data', 'cities.csv'))
-    with open(os.path.join(BASE, 'output', 'road_gtsp_fixed_result.json')) as f:
+    df = pd.read_csv(os.path.join(BASE, 'data', 'gtsp', 'cities.csv'))
+    with open(os.path.join(BASE, 'output', 'gtsp', 'road_gtsp_fixed_result.json')) as f:
         sol = json.load(f)
-    with open(os.path.join(BASE, 'output', 'road_segments_fixed.json')) as f:
+    with open(os.path.join(BASE, 'output', 'gtsp', 'road_segments_fixed.json')) as f:
         road_segs = json.load(f)
     path = sol['path']
     dist_open = sol['distance_open']
@@ -397,7 +397,7 @@ def main():
     ax.legend(handles=legend_elems, loc='lower left', fontsize=14,
               framealpha=0.95, edgecolor='#aab4be', borderpad=0.8)
 
-    out = os.path.join(BASE, 'output', 'gtsp_route_roadnet_fixed.png')
+    out = os.path.join(BASE, 'output', 'gtsp', 'gtsp_route_roadnet_fixed.png')
     plt.savefig(out, dpi=150, bbox_inches='tight', facecolor='#ffffff')
     plt.close()
     print(f"已保存: {os.path.abspath(out)}")

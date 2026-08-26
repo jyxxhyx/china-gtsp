@@ -54,9 +54,9 @@ def resolve_overlaps(positions, width=60, height=22, max_iter=200):
 
 
 def main():
-    df = pd.read_csv(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data', 'cities.csv'))
+    df = pd.read_csv(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data', 'gtsp', 'cities.csv'))
 
-    with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'output', 'road_gtsp_ils_result.json')) as f:
+    with open(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'output', 'gtsp', 'road_gtsp_asym_result.json')) as f:
         sol = json.load(f)
     path = sol['path']
     dist_open = sol['distance_open']
@@ -94,7 +94,7 @@ def main():
 
     # 路线: OSRM真实路网polyline
     import json as _json
-    with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'output', 'road_segments.json')) as f:
+    with open(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'output', 'gtsp', 'road_segments_asym.json')) as f:
         road_segs = _json.load(f)
     for seg in road_segs:
         if not seg.get('coords'):
@@ -236,7 +236,7 @@ def main():
     from matplotlib.lines import Line2D
     legend_elems = [
         Line2D([0], [0], color='#d63031', lw=2.2,
-               label=f'实际路网路线（OSRM路网距离优化）总里程 {sum(s["road_km"] for s in road_segs if s["road_km"]):,.0f} km'),
+               label=f'实际路网路线（非对称路网GTSP最优）总里程 {sum(s["road_km"] for s in road_segs if s["road_km"]):,.0f} km'),
         Line2D([0], [0], marker='o', color='w', markerfacecolor='#d63031',
                markersize=9, label='选中城市（34省各1）'),
         Line2D([0], [0], marker='o', color='w', markerfacecolor='#b8c2cc',
@@ -245,7 +245,7 @@ def main():
     ax.legend(handles=legend_elems, loc='lower left', fontsize=15,
               framealpha=0.95, edgecolor='#aab4be', borderpad=0.8)
 
-    out = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'output', 'route_roadnet.png')
+    out = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'output', 'gtsp', 'route_roadnet_asym.png')
     plt.savefig(out, dpi=150, bbox_inches='tight', facecolor='#ffffff')
     plt.close()
     print(f"已保存: {os.path.abspath(out)}")

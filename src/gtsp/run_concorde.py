@@ -62,7 +62,7 @@ def main():
 
     t0 = time.time()
     root = os.path.dirname(os.path.abspath(__file__))
-    df, clusters, provs, dist = load(os.path.join(root, 'data', 'cities.csv'))
+    df, clusters, provs, dist = load(os.path.join(root, 'data', 'gtsp', 'cities.csv'))
     print(f'[1/5] {len(df)}城 {len(clusters)}省簇')
 
     res = build_pipeline(dist, clusters)
@@ -86,7 +86,7 @@ def main():
             sys.exit(1)
         toks = open(sol_f).read().split()
         tour = [int(t) for t in toks[1:int(toks[0]) + 1]]
-        shutil.copy(log_f, os.path.join(root, 'output', 'concorde_run.log'))
+        shutil.copy(log_f, os.path.join(root, 'output', 'gtsp', 'concorde_run.log'))
 
     print('[5/5] 反变换...')
     path = extract_gtsp(tour, res)
@@ -102,7 +102,7 @@ def main():
     print(f'开放路径: {d:.1f} km  (STSP对账: {derived:.1f})')
     print(f'路线: {" → ".join(cities[:6])} → ... → {cities[-1]}')
 
-    os.makedirs(os.path.join(root, 'output'), exist_ok=True)
+    os.makedirs(os.path.join(root, 'output', 'gtsp'), exist_ok=True)
     out = os.path.join(root, args.out) if not os.path.isabs(args.out) else args.out
     json.dump({'distance_open_km': round(d, 1), 'stsp_cost': int(stsp_cost),
                'derived_km': round(derived, 1), 'path': path, 'cities': cities,

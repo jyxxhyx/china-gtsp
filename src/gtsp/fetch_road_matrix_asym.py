@@ -4,7 +4,7 @@ import json, os, time, urllib.request
 import numpy as np
 import pandas as pd
 
-_root = os.path.dirname(os.path.abspath(__file__))
+_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 os.chdir(_root)
 BASE = "http://router.project-osrm.org/table/v1/driving/"
 HDR = {'User-Agent': 'china-gtsp-asym/1.0'}
@@ -21,7 +21,7 @@ def table(coords):
             time.sleep(3*(att+1))
     raise RuntimeError
 
-df = pd.read_csv('data/cities.csv')
+df = pd.read_csv(os.path.join(_root, 'data', 'gtsp', 'cities.csv'))
 n = len(df)
 coords_all = list(zip(df['lng'].values, df['lat'].values))
 B = 100
@@ -54,5 +54,5 @@ for bi in range(nb):
 
 zeros = [(i,j) for i in range(n) for j in range(n) if i!=j and D[i][j]==0]
 print(f"零值: {len(zeros)}")
-np.save(os.path.join(_root, 'output', 'road_matrix_asym.npy'), D)
+np.save(os.path.join(_root, 'output', 'gtsp', 'road_matrix_asym.npy'), D)
 print(f"saved, 不对称max={np.abs(D-D.T).max():.1f} km")
